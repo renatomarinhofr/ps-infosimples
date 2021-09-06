@@ -50,8 +50,8 @@ const url = "https://storage.googleapis.com/infosimples-output/commercia/case/pr
     const skusList = skusArray.map((sku) => {
       return {
         name: sku.querySelector('div.sku-name') ? sku.querySelector('div.sku-name').innerText : '',
-        current_price: sku.querySelector('div.sku-current-price') ? Number(sku.querySelector('div.sku-current-price').innerText.match(/[0-9]{2}[.][0-9]{2}/g)) : null,
-        old_price: sku.querySelector('div.sku-old-price') ? Number(sku.querySelector('div.sku-old-price').innerText.match(/[0-9]{2}[.][0-9]{2}/g)) : null,
+        current_price: sku.querySelector('div.sku-current-price') ? parseFloat(sku.querySelector('div.sku-current-price').innerText.match(/\d+\.\d+/g)) : null,
+        old_price: sku.querySelector('div.sku-old-price') ? parseFloat(sku.querySelector('div.sku-old-price').innerText.match(/\d+\.\d+/g)) : null,
         available: sku.querySelector('div i') ? sku.querySelector('div i').innerText : null,
       }
     })
@@ -60,20 +60,19 @@ const url = "https://storage.googleapis.com/infosimples-output/commercia/case/pr
 
   // Lista com as propriedades do produto
   const propertiesList = await page.evaluate(() => {
-    const nodeList = document.querySelectorAll('table.pure-table.pure-table-bordered');
+    const nodeList = document.querySelectorAll('body > div > section > div > div:nth-child(8) > table > tbody > tr');
 
     const propertiesArray = [...nodeList];
 
     const propertiesList = propertiesArray.map((propertie) => {
       return {
-        label: propertie.querySelector('tr td b').innerText,
-        value: propertie.querySelector('tr td').innerText
+        label: propertie.querySelector('td:nth-child(1)') ? propertie.querySelector('td:nth-child(1)').innerText : '',
+        value: propertie.querySelector('td:nth-child(2)') ? propertie.querySelector('td:nth-child(2)').innerText : ''
+
       }
     })
     return propertiesList;
   });
-
-  console.log(propertiesList);
 
 
 
@@ -84,15 +83,15 @@ const url = "https://storage.googleapis.com/infosimples-output/commercia/case/pr
 
     const reviewArray = [...reviewsList]
 
-    const reviewsName = reviewArray.map((revName) => {
+    const reviews = reviewArray.map((revName) => {
       return {
         name: revName.querySelector('span.review-username').innerText,
-        date: revName.querySelector('span.review-date').innerText,
-        score: revName.querySelector('span.review-stars').innerText,
+        date: revName.querySelector('span.review-date').innerText,      
+        score: revName.querySelector('span.review-stars').innerText === "★☆☆☆☆" ? 1 : revName.querySelector('span.review-stars').innerText === "★★☆☆☆" ? 2 : revName.querySelector('span.review-stars').innerText === "★★★☆☆" ? 3 : revName.querySelector('span.review-stars').innerText === "★★★★☆" ? 4 : 5,
         text: revName.querySelector('p').innerText
       }
     })
-    return reviewsName;
+    return reviews;
   });
 
 
@@ -119,6 +118,9 @@ const url = "https://storage.googleapis.com/infosimples-output/commercia/case/pr
     }, {
       'skus': skusList
     }, {
+      'properties': propertiesList
+    },
+    {
       'reviews': reviews
     }, {
       'reviews_average_score': reviewsAverageScore
