@@ -1,0 +1,23 @@
+{
+  "name": "ps-infosimples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/renatomarinhofr/ps-infosimples.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/renatomarinhofr/ps-infosimples/issues"
+  },
+  "homepage": "https://github.com/renatomarinhofr/ps-infosimples#readme",
+  "dependencies": {
+    "puppeteer": "^10.2.0"
+  }
+}
